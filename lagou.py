@@ -55,13 +55,14 @@ class Lagou():
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) '
                        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
             }
-        print('正在抓取信息，请稍等....')
+        print('正在抓取信息，共%d页,请稍等....' % int(page_num))
         for i in range(1, int(page_num)+1):
             page_number = i
+            print('正在抓取第%d页....' % page_number)
             data_params = {
                 'first': 'false',
                 'pn': str(page_number),
-                'kd': self.job,
+                'kd': parse.quote(self.job),
                 }
             html = s.post(data_url, headers=data_headers, params=data_params).content
             html = html.decode('utf-8')
@@ -70,6 +71,7 @@ class Lagou():
             datas.append(content)
             wait_time = random.randint(9, 15)
             time.sleep(wait_time)
+            print('抓取完成.')
         return datas
 
     def analysis_data(self, data):
@@ -80,15 +82,18 @@ class Lagou():
                          'education', 'companyLabelList', 'positionAdvantage']
         detail_id = 1
         detail_url_list = []
-        for item in data:
-            for detail in item:
-                print('第%d个信息....' % detail_id)
-                for e, value in enumerate(content_value):
-                    print('{}-> {}'.format(content_key[e], detail[value]))
-                detail_url = 'http://www.lagou.com/jobs/' + str(detail['positionId']) + '.html'
-                detail_url_list.append(detail_url)
-                detail_id += 1
-                print('-'*70)
+        with open('%s_%s.txt' % (self.city, self.job), 'wt') as f:
+            for item in data:
+                for detail in item:
+                    f.write('第%d个信息....\n' % detail_id)
+                    for e, value in enumerate(content_value):
+                        f.write('{}-> {}\n'.format(content_key[e], detail[value]))
+                    detail_url = 'http://www.lagou.com/jobs/' + str(detail['positionId']) + '.html'
+                    detail_url_list.append(detail_url)
+                    detail_id += 1
+                    f.write('-'*70)
+                    f.write('\n')
+        f.close()
         return detail_url_list
 
     def Get_Job_detail(self, url_list):
