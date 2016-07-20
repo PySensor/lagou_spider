@@ -25,7 +25,8 @@ class Lagou():
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
             'Accept': 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Referer': 'http://www.lagou.com/jobs/list_' + parse.quote(self.job) + '?labelWords=&fromSearch=true&suginput=',
+            'Referer': 'http://www.lagou.com/jobs/list_' + parse.quote(self.job) +
+                       '?labelWords=&fromSearch=true&suginput=',
             'Accept-Encoding': 'gzip, deflate, sdch',
             'Accept-Language': 'ja,zh-CN;q=0.8,zh;q=0.6',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) '
@@ -49,12 +50,13 @@ class Lagou():
             'Accept': 'application/json, text/javascript, */*; q=0.01',
             'X-Requested-With': 'XMLHttpRequest',
             'X-Anit-Forge-Token': 'None',
-            'Referer': 'http://www.lagou.com/jobs/list_' + parse.quote(self.job) + '?labelWords=&fromSearch=true&suginput=',
+            'Referer': 'http://www.lagou.com/jobs/list_' + parse.quote(self.job) +
+                       '?labelWords=&fromSearch=true&suginput=',
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'ja,zh-CN;q=0.8,zh;q=0.6',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) '
                        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-            }
+                    }
         print('正在抓取信息，共%d页,请稍等....' % int(page_num))
         for i in range(1, int(page_num)+1):
             page_number = i
@@ -62,7 +64,7 @@ class Lagou():
             data_params = {
                 'first': 'false',
                 'pn': str(page_number),
-                'kd': parse.quote(self.job),
+                'kd': self.job,
                 }
             html = s.post(data_url, headers=data_headers, params=data_params).content
             html = html.decode('utf-8')
@@ -94,6 +96,7 @@ class Lagou():
                     f.write('-'*70)
                     f.write('\n')
         f.close()
+        print('共有%d个信息' % len(detail_url_list))
         return detail_url_list
 
     def Get_Job_detail(self, url_list):
